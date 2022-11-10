@@ -27,8 +27,17 @@ async function run() {
 
     try {
 
-        const servicesCollection = client.db('photographer').collection('services')
+        const servicesCollection = client.db('photographer').collection('services');
+        const ordersCollection = client.db('photographer').collection('orders');
 
+        app.get('/three', async(req, res) =>{
+            const query = {}
+            const cursor = servicesCollection.find(query)
+            const ser = await cursor.limit(3).toArray();
+            res.send(ser)
+        })
+        
+        
         app.get('/services', async(req, res) =>{
             const query = {}
             const cursor = servicesCollection.find(query)
@@ -43,6 +52,31 @@ async function run() {
             const service = await  servicesCollection.findOne(query)
             res.send(service);
 
+        });
+
+
+
+        //orders area
+
+        app.get ('/orders', async(req, res) =>{
+
+            let query ={};
+            if(req.query.email){
+                query ={
+                    email:req.query.email
+                }
+
+            }
+            const cursor = ordersCollection.find(query);
+            const orders = await cursor.toArray();
+            res.send(orders);
+
+        })
+
+        app.post('/orders', async(req, res) =>{
+            const order = req.body;
+            const result = await ordersCollection.insertOne(order);
+            res.send(result);
         })
 
     }
