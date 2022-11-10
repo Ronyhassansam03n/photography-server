@@ -29,6 +29,8 @@ async function run() {
 
         const servicesCollection = client.db('photographer').collection('services');
         const ordersCollection = client.db('photographer').collection('orders');
+        const reviewCollection =client.db('photographer').collection('review')
+        const reviewsCollection =client.db('photographer').collection('reviews')
 
         app.get('/three', async(req, res) =>{
             const query = {}
@@ -54,6 +56,22 @@ async function run() {
 
         });
 
+        app.get('/review', async(req, res) =>{
+            const query = {}
+            const cursor = reviewCollection.find(query)
+            const reviews = await cursor.toArray();
+            res.send(reviews)
+        })
+        app.get('/review/:id', async(req, res) =>{
+            const id = req.params.id;
+            const query = {_id : ObjectId(id)}
+            const review = await  reviewCollection.findOne(query)
+            res.send(review);
+
+            
+        })
+
+
 
 
         //orders area
@@ -76,6 +94,31 @@ async function run() {
         app.post('/orders', async(req, res) =>{
             const order = req.body;
             const result = await ordersCollection.insertOne(order);
+            res.send(result);
+        })
+
+  ///          // reviews
+
+
+
+        app.get ('/reviews', async(req, res) =>{
+
+            let query ={};
+            if(req.query.email){
+                query ={
+                    email:req.query.email
+                }
+
+            }
+            const cursor =reviewsCollection.find(query);
+            const myReviews = await cursor.toArray();
+            res.send(myReviews);
+
+        })
+
+        app.post('/reviews', async(req, res) =>{
+            const myReview = req.body;
+            const result = await reviewsCollection.insertOne(myReview);
             res.send(result);
         })
 
