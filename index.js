@@ -101,11 +101,12 @@ async function run() {
 
 
         app.get ('/reviews', async(req, res) =>{
+            console.log(req.query);
 
             let query ={};
             if(req.query.email){
                 query ={
-                    email:req.query.email
+                    myEmail : req.query.email
                 }
 
             }
@@ -113,7 +114,7 @@ async function run() {
             const myReviews = await cursor.toArray();
             res.send(myReviews);
 
-        })
+        });
 
         app.post('/reviews', async(req, res) =>{
             const myReview = req.body;
